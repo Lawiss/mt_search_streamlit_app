@@ -30,17 +30,16 @@ if query:
     similarities = cosine_similarity([input_embedding], aides_embeddings)
     aides_df["similarity"] = similarities[0]
     top_6_df = aides_df.sort_values("similarity", ascending=False).head(6)
-
     for i, (_, item) in enumerate(top_6_df.iterrows()):
         if i < 3:
             cols_up[i].subheader(item["name"])
-            cols_up[i].markdown(f"Similarity: **{item['similarity']}**")
+            cols_up[i].markdown(f"Similarity: **{item['similarity']:.2f}**")
             cols_up[i].expander("Voir la description").markdown(
                 item["description"], unsafe_allow_html=True
             )
         else:
             cols_down[i - 3].subheader(item["name"])
-            cols_down[i - 3].markdown(f"Similarity: **{item['similarity']}**")
+            cols_down[i - 3].markdown(f"Similarity: **{item['similarity']:.2f}**")
             cols_down[i - 3].expander("Voir la description").markdown(
                 item["description"], unsafe_allow_html=True
             )
