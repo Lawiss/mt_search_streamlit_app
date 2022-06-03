@@ -1,3 +1,4 @@
+import pickle
 from os import PathLike
 from typing import List, Union
 
@@ -46,4 +47,10 @@ def load_model(
 @st.cache
 def compute_embeddings(texts_list: List[str], model: SentenceTransformer) -> np.ndarray:
     aides_vectors = model.encode(texts_list, batch_size=16)
+    return aides_vectors
+
+
+@st.cache
+def load_embeddings(data_path: Union[str, PathLike]) -> np.ndarray:
+    aides_vectors = pickle.load(open(data_path, "rb"))
     return aides_vectors

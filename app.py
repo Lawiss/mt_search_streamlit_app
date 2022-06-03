@@ -3,7 +3,7 @@ from pathlib import Path
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 
-from utils import compute_embeddings, load_data, load_model
+from utils import compute_embeddings, load_data, load_embeddings, load_model
 
 st.set_page_config(
     layout="wide",
@@ -12,12 +12,13 @@ st.set_page_config(
 )
 DATA_PATH = Path("data/")
 MT_AIDES_FILEPATH = DATA_PATH / "MT_aides.json"
+EMBEDDINGS_FILEPATH = DATA_PATH / "aides_embeddings.pkl"
 
 aides_df = load_data(MT_AIDES_FILEPATH)
 aides_text = aides_df["full_text"].tolist()
 
 model = load_model("dangvantuan/sentence-camembert-base")
-aides_embeddings = compute_embeddings(aides_text, model)
+aides_embeddings = load_embeddings(EMBEDDINGS_FILEPATH)
 
 query = st.text_input("Recherche :")
 
@@ -33,11 +34,13 @@ if query:
     for i, (_, item) in enumerate(top_6_df.iterrows()):
         if i < 3:
             cols_up[i].subheader(item["name"])
+            cols_up[i].markdown(f"Similarity: **{item['similarity']}**")
             cols_up[i].expander("Voir la description").markdown(
                 item["description"], unsafe_allow_html=True
             )
         else:
             cols_down[i - 3].subheader(item["name"])
+            cols_down[i - 3].markdown(f"Similarity: **{item['similarity']}**")
             cols_down[i - 3].expander("Voir la description").markdown(
                 item["description"], unsafe_allow_html=True
             )
