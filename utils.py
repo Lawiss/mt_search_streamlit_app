@@ -44,6 +44,6 @@ def load_model(
 
 
 @st.cache
-def compute_embeddings(texts_list: List[str], model) -> np.ndarray:
-    aides_vectors = model.encode(texts_list)
+def compute_embeddings(texts_list: List[str], model: SentenceTransformer) -> np.ndarray:
+    aides_vectors = model.encode(texts_list, batch_size=16)
     return aides_vectors

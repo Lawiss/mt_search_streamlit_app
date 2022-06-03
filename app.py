@@ -14,20 +14,22 @@ DATA_PATH = Path("data/")
 MT_AIDES_FILEPATH = DATA_PATH / "MT_aides.json"
 
 aides_df = load_data(MT_AIDES_FILEPATH)
-model = load_model()
-aides_embeddings = compute_embeddings(aides_df["full_text"].tolist(), model)
+aides_text = aides_df["full_text"].tolist()
+
+model = load_model("dangvantuan/sentence-camembert-base")
+aides_embeddings = compute_embeddings(aides_text, model)
 
 query = st.text_input("Recherche :")
 
-input_embedding = model.encode(query)
-similarities = cosine_similarity([input_embedding], aides_embeddings)
-aides_df["similarity"] = similarities[0]
-
-top_6_df = aides_df.sort_values("similarity", ascending=False).head(6)
 
 cols_up, cols_down = st.columns(3), st.columns(3)
 
 if query:
+    input_embedding = model.encode(query)
+    similarities = cosine_similarity([input_embedding], aides_embeddings)
+    aides_df["similarity"] = similarities[0]
+    top_6_df = aides_df.sort_values("similarity", ascending=False).head(6)
+
     for i, (_, item) in enumerate(top_6_df.iterrows()):
         if i < 3:
             cols_up[i].subheader(item["name"])
